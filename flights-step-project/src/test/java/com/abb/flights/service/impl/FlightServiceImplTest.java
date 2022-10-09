@@ -12,25 +12,21 @@ import org.mockito.Mockito;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FlightServiceImplTest {
 
     private FlightService flightService;
-    private FlightDao flightDao;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @BeforeEach
     public void setUp() {
 
-        flightDao = Mockito.mock(FlightDao.class);//new FlightDao()
+        flightService = Context.getFlightService();
 
-        flightService = new FlightServiceImpl(flightDao);
-    }
-
-    @Test
-    public void getAll() {
+        ControlPanel.startApplication();
     }
 
     @Test
@@ -39,8 +35,6 @@ class FlightServiceImplTest {
 
         try {
             Flight expected = getFlight(id, 100, "Turkey");
-
-            Mockito.when(flightDao.getById(id)).thenReturn(expected);
 
             Flight actual = flightService.getById(id);
 
@@ -53,10 +47,18 @@ class FlightServiceImplTest {
 
     @Test
     public void getByDestinationAndFlightDate() {
-    }
+        String destination = "Turkey";
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse("2022-10-22 21:00:00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-    @Test
-    public void addFlight() {
+        Flight expected = new Flight(1, 100, destination, date);
+        Flight actual = flightService.getByDestinationAndFlightDate(destination, date);
+
+        assertEquals(expected, actual);
     }
 
 
